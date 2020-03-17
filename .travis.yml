@@ -1,0 +1,22 @@
+dist: bionic
+
+language: python
+
+cache: pip
+
+python:
+    - "3.6"
+    - "3.7"
+    - "3.8"
+
+install:
+    - make develop
+
+before_script:
+    - make lint
+
+script:
+    - make tests
+
+after_script:
+    - bash <(curl -s https://codecov.io/bash)
