@@ -7,4 +7,35 @@ module = "pycran"
 author = "Sultan Iman"
 author-email = "sultan.imanhodjaev@gmail.com"
 home-page = "https://github.com/imanhodjaev/pycran"
-classifiers = ["License :: OSI Approved :: Apache Software License"]
+keywords="CRAN,R,metadata,parse,yamp"
+description-file = "README.md"
+requires-python = ">=3.6"
+requires = []
+classifiers = [
+    "License :: OSI Approved :: Apache Software License",
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Developers",
+    "Natural Language :: English",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development",
+    "Typing :: Typed"
+]
+
+[tool.flit.metadata.requires-extra]
+test = [
+    "pytest",
+    "pytest-cov"
+]
+
+dev = [
+    "bumpversion",
+    "black==19.10b0",
+    "isort",
+    "mypy",
+]
