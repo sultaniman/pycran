@@ -27,6 +27,9 @@ classifiers = [
     "Typing :: Typed"
 ]
 
+[tool.flit.sdist]
+include = ["README.md"]
+
 [tool.flit.metadata.requires-extra]
 test = [
     "pytest",
