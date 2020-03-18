@@ -1,14 +1,15 @@
-from typing import Dict, Generator, Optional, Union
+"""Parse CRAN package metadata"""
+from typing import Dict, Generator, Optional
+
+from pycran.util import (
+    as_string,
+    BytesOrString,
+    get_description,
+    PathOrTarFile
+)
 
 
-BytesOrString = Union[bytes, str]
-
-
-def as_string(meta_line: BytesOrString) -> str:
-    if isinstance(meta_line, bytes):
-        return meta_line.decode("utf-8")
-
-    return meta_line
+__version__ = "0.1.0"
 
 
 def from_packages_list(data: BytesOrString) -> Generator:
@@ -108,3 +109,7 @@ def from_cran_format(metadata: str) -> Optional[Dict]:
         return packages[0]
 
     return None
+
+
+def from_file(archive: PathOrTarFile) -> Optional[Dict]:
+    return from_cran_format(get_description(archive))
