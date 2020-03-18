@@ -79,7 +79,7 @@ def encode(metadata: Dict) -> Optional[str]:
     return "\n".join([f"{key}: {value}" for key, value in metadata.items()])
 
 
-def decode(metadata: str) -> Optional[Dict]:
+def decode(metadata: BytesOrString) -> Optional[Dict]:
     """Parse package metadata
     Note: it is a shorthand to `parse`
           then extracts the first value from it.
