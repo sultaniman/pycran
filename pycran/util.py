@@ -25,4 +25,4 @@ def get_description(archive: PathOrTarFile) -> str:
             description_file = os.path.join(package_name, "DESCRIPTION")
             description = tar.getmember(description_file)
             with tar.fileobject(tar, description) as metadata:
-                return as_string(metadata.read())
+                return metadata.read()
