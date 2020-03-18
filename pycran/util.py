@@ -1,6 +1,5 @@
-import os
 import tarfile
-from typing import Union
+from typing import Optional, Union
 
 
 PathOrTarFile = Union[tarfile.TarFile, str]
@@ -8,6 +7,12 @@ BytesOrString = Union[bytes, str]
 
 
 def as_string(meta_line: BytesOrString) -> str:
+    """Convert bytes to string
+    Args:
+        meta_line (BytesOrString): raw metadata
+    Returns:
+        (str): string version of `meta_line`
+    """
     if isinstance(meta_line, bytes):
         return meta_line.decode("utf-8")
 
@@ -15,14 +20,36 @@ def as_string(meta_line: BytesOrString) -> str:
 
 
 def get_description(archive: PathOrTarFile) -> str:
+    """Convert bytes to string
+    Args:
+        archive (PathOrTarFile): path to archive or `TarFile` instance
+
+    Returns:
+        (str): contents of description file
+    """
+    tar = archive
     if isinstance(archive, str):
         if not tarfile.is_tarfile(archive):
-            raise tarfile.TarError(f"File {archive} is not tar archive")
+            raise tarfile.TarError(f"File {archive} is not tar archive.")
 
-        filename = os.path.basename(archive)
-        [package_name, *_rest] = filename.split("_", maxsplit=1)
-        with tarfile.open(archive) as tar:
-            description_file = os.path.join(package_name, "DESCRIPTION")
-            description = tar.getmember(description_file)
-            with tar.fileobject(tar, description) as metadata:
-                return metadata.read()
+        tar = tarfile.open(archive)
+
+    with tar:
+        description = tar.getmember(get_description_path(tar))
+        with tar.fileobject(tar, description) as metadata:
+            return metadata.read()
+
+
+def get_description_path(tar: tarfile.TarFile) -> Optional[str]:
+    """Lookup description file
+    Args:
+        tar (tarfile.TarFile): TarFile instance
+
+    Returns:
+        (str): path to description file
+    """
+    for info in tar.getmembers():
+        if "DESCRIPTION" in info.path:
+            return info.path
+
+    raise tarfile.TarError("Description file not found.")
