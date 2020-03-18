@@ -43,7 +43,7 @@ def get_description(archive: PathOrTarFile) -> str:
 def get_description_path(tar: tarfile.TarFile) -> Optional[str]:
     """Lookup description file
     Args:
-        tar (tarfile.TarFile): TarFile instance
+        tar (tarfile.TarFile): `tarfile.TarFile` instance
 
     Returns:
         (str): path to description file

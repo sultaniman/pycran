@@ -112,4 +112,11 @@ def from_cran_format(metadata: str) -> Optional[Dict]:
 
 
 def from_file(archive: PathOrTarFile) -> Optional[Dict]:
+    """
+    Args:
+        archive (PathOrTarFile): path to archive or `tarfile.TarFile` instance
+
+    Returns:
+        (dict): Dictionary of R package metadata
+    """
     return from_cran_format(get_description(archive))
