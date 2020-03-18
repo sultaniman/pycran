@@ -35,10 +35,10 @@ def from_packages_list(data: BytesOrString) -> Generator:
 
         if ":" in line:
             parts = line.split(":")
-            field = str(parts[0].strip())
+            field = parts[0].strip()
             value = str("".join(parts[1:]).strip())
 
-            if field in fields:
+            if field and field in fields:
                 fields = {field}
                 result = {**package}
                 package = {field: value}
@@ -48,12 +48,12 @@ def from_packages_list(data: BytesOrString) -> Generator:
                 # Here we want to parse dangling lines
                 # like the ones with long dependency
                 # list, `R (>= 2.15.0), xtable, pbapply ... \n    and more`
-                package[field] = str(value)
+                package[field] = value
                 fields.add(field)
         else:
             pairs = list(package.items())
             if pairs:
-                last_field = str(pairs[-1][0])
+                last_field = pairs[-1][0]
                 package[last_field] += f" {line.strip()}"
 
     # We also need to return the metadata for
