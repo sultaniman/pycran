@@ -12,12 +12,14 @@ from pycran.util import (
 __version__ = "0.1.0"
 
 
-def from_packages_list(data: BytesOrString) -> Generator:
+def parse(data: BytesOrString) -> Generator:
     """Parses CRAN package metadata from
     https://cran.r-project.org/src/contrib/PACKAGES
     and returns the list of dictionaries.
+
     Args:
         data (BytesOrString): raw text from the package list
+
     Returns:
         (Generator): each entry from packages as dictionary
     """
@@ -63,9 +65,9 @@ def from_packages_list(data: BytesOrString) -> Generator:
         yield package
 
 
-def to_cran_format(metadata: Dict) -> Optional[str]:
-    """
-    Dump dictionary into the following form
+def encode(metadata: Dict) -> Optional[str]:
+    """Dump dictionary into the following form
+
         Package: A3
         Version: 1.0.0
         Depends: R (>= 2.15.0), xtable, pbapply
@@ -76,6 +78,7 @@ def to_cran_format(metadata: Dict) -> Optional[str]:
 
     Args:
         metadata (Dict): Converts metadata dictionary to deb format
+
     Returns:
         (Optional[str]): package record as deb format
     """
@@ -85,13 +88,14 @@ def to_cran_format(metadata: Dict) -> Optional[str]:
     ])
 
 
-def from_cran_format(metadata: str) -> Optional[Dict]:
+def decode(metadata: str) -> Optional[Dict]:
     """Parse package metadata
-    Note: it is a shorthand to `from_packages_list`
+    Note: it is a shorthand to `parse`
           then extracts the first value from it.
     Input should be in the following format
     which is R package metadata description
     see: https://cran.r-project.org/src/contrib/PACKAGES
+
         Package: A3
         Version: 1.0.0
         Depends: R (>= 2.15.0), xtable, pbapply
@@ -99,24 +103,26 @@ def from_cran_format(metadata: str) -> Optional[Dict]:
         License: GPL (>= 2)
         MD5sum: 027ebdd8affce8f0effaecfcd5f5ade2
         NeedsCompilation: no
+
     Args:
         metadata (str): metadata text information
+
     Returns:
         (Optional[Dict]): Parse deb format and return dictionary
     """
-    packages = list(from_packages_list(metadata))
-    if packages:
-        return packages[0]
-
-    return None
+    try:
+        [package, *_rest] = list(parse(metadata))
+        return package
+    except (ValueError, TypeError):
+        return None
 
 
 def from_file(archive: PathOrTarFile) -> Optional[Dict]:
-    """
+    """Load and parse CRAN package archive
     Args:
         archive (PathOrTarFile): path to archive or `tarfile.TarFile` instance
 
     Returns:
         (dict): Dictionary of R package metadata
     """
-    return from_cran_format(get_description(archive))
+    return decode(get_description(archive))

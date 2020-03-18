@@ -1,5 +1,9 @@
 import tarfile
+
+from os import path
 from typing import Optional, Union
+
+from pycran.errors import DescriptionNotFound, NotTarFile
 
 
 PathOrTarFile = Union[tarfile.TarFile, str]
@@ -29,8 +33,11 @@ def get_description(archive: PathOrTarFile) -> str:
     """
     tar = archive
     if isinstance(archive, str):
+        if not path.exists(archive):
+            raise FileNotFoundError(f"File {archive} does not exist.")
+
         if not tarfile.is_tarfile(archive):
-            raise tarfile.TarError(f"File {archive} is not tar archive.")
+            raise NotTarFile(f"File {archive} is not tar archive.")
 
         tar = tarfile.open(archive)
 
@@ -52,4 +59,4 @@ def get_description_path(tar: tarfile.TarFile) -> Optional[str]:
         if "DESCRIPTION" in info.path:
             return info.path
 
-    raise tarfile.TarError("Description file not found.")
+    raise DescriptionNotFound("Description file not found.")
