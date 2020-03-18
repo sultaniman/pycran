@@ -222,7 +222,7 @@ def test_parse_can_parse_mixed_entries_from_cran_registry():
         ]
 
 
-def test_to_cran_format():
+def test_encode():
     metadata = """
     Package: ABACUS
     Version: 1.0.0
