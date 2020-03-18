@@ -5,8 +5,7 @@ from zipfile import ZipFile
 import pytest
 
 from pycran import decode, encode, from_file, parse
-from pycran.errors import DescriptionNotFound
-
+from pycran.errors import DescriptionNotFound, NotTarFile
 
 data_path = path.join(path.dirname(__file__), "data")
 
@@ -41,7 +40,7 @@ def test_parse_works_with_normal_data():
         "Suggests": "rmarkdown (>= 1.13), knitr (>= 1.22)",
         "License": "GPL-3",
         "MD5sum": "50c54c4da09307cb95a70aaaa54b9fbd",
-        "NeedsCompilation": "no"
+        "NeedsCompilation": "no",
     }
 
 
@@ -71,7 +70,7 @@ def test_parse_works_on_non_separated_data():
             "Depends": "R (>= 2.10), abc.data, nnet, quantreg, MASS, locfit",
             "License": "GPL (>= 3)",
             "MD5sum": "c9fffe4334c178917f762735aba59653",
-            "NeedsCompilation": "no"
+            "NeedsCompilation": "no",
         },
         {
             "Package": "abc.data",
@@ -79,8 +78,8 @@ def test_parse_works_on_non_separated_data():
             "Depends": "R (>= 2.10)",
             "License": "GPL (>= 3)",
             "MD5sum": "799079dbbdd0cfc9d9c61c3e35241806",
-            "NeedsCompilation": "no"
-        }
+            "NeedsCompilation": "no",
+        },
     ]
 
     data = """
@@ -137,7 +136,7 @@ def test_parse_works_on_mixed_data():
             "Depends": "R (>= 2.10), abc.data, nnet, quantreg, MASS, locfit",
             "License": "GPL (>= 3)",
             "MD5sum": "c9fffe4334c178917f762735aba59653",
-            "NeedsCompilation": "no"
+            "NeedsCompilation": "no",
         },
         {
             "Package": "abc.data",
@@ -145,7 +144,7 @@ def test_parse_works_on_mixed_data():
             "Depends": "R (>= 2.10)",
             "License": "GPL (>= 3)",
             "MD5sum": "799079dbbdd0cfc9d9c61c3e35241806",
-            "NeedsCompilation": "no"
+            "NeedsCompilation": "no",
         },
         {
             "Package": "abbyyR",
@@ -155,8 +154,8 @@ def test_parse_works_on_mixed_data():
             "Suggests": "testthat, rmarkdown, knitr (>= 1.11), lintr",
             "License": "MIT + file LICENSE",
             "MD5sum": "e048a3bca6ea32126e6c367415c0bfaf",
-            "NeedsCompilation": "no"
-        }
+            "NeedsCompilation": "no",
+        },
     ]
 
 
@@ -199,7 +198,7 @@ def test_parse_can_parse_mixed_entries_from_cran_registry():
                 "Suggests": "randomForest, e1071",
                 "License": "GPL (>= 2)",
                 "MD5sum": "027ebdd8affce8f0effaecfcd5f5ade2",
-                "NeedsCompilation": "no"
+                "NeedsCompilation": "no",
             },
             {
                 "Package": "A8",
@@ -208,7 +207,7 @@ def test_parse_can_parse_mixed_entries_from_cran_registry():
                 "Suggests": "randomForest, e1071",
                 "License": "GPL (>= 2)",
                 "MD5sum": "027ebdd8affce8f0effaecfcd5f5ade2",
-                "NeedsCompilation": "no"
+                "NeedsCompilation": "no",
             },
             {
                 "Package": "aaSEA",
@@ -218,8 +217,8 @@ def test_parse_can_parse_mixed_entries_from_cran_registry():
                 "Suggests": "knitr, rmarkdown",
                 "License": "GPL-3",
                 "MD5sum": "0f9aaefc1f1cf18b6167f85dab3180d8",
-                "NeedsCompilation": "no"
-            }
+                "NeedsCompilation": "no",
+            },
         ]
 
 
@@ -234,16 +233,18 @@ def test_to_cran_format():
     MD5sum: 50c54c4da09307cb95a70aaaa54b9fbd
     NeedsCompilation: no
     """
-    result = encode({
-        "Package": "ABACUS",
-        "Version": "1.0.0",
-        "Depends": "R (>= 3.1.0)",
-        "Imports": "ggplot2 (>= 3.1.0), shiny (>= 1.3.1),",
-        "Suggests": "rmarkdown (>= 1.13), knitr (>= 1.22)",
-        "License": "GPL-3",
-        "MD5sum": "50c54c4da09307cb95a70aaaa54b9fbd",
-        "NeedsCompilation": "no"
-    })
+    result = encode(
+        {
+            "Package": "ABACUS",
+            "Version": "1.0.0",
+            "Depends": "R (>= 3.1.0)",
+            "Imports": "ggplot2 (>= 3.1.0), shiny (>= 1.3.1),",
+            "Suggests": "rmarkdown (>= 1.13), knitr (>= 1.22)",
+            "License": "GPL-3",
+            "MD5sum": "50c54c4da09307cb95a70aaaa54b9fbd",
+            "NeedsCompilation": "no",
+        }
+    )
 
     def clean(data):
         return "\n".join([line.strip() for line in data.split("\n")]).strip()
@@ -272,10 +273,14 @@ def test_decode_works():
         "Suggests": "rmarkdown (>= 1.13), knitr (>= 1.22)",
         "License": "GPL-3",
         "MD5sum": "50c54c4da09307cb95a70aaaa54b9fbd",
-        "NeedsCompilation": "no"
+        "NeedsCompilation": "no",
     }
 
     assert decode(deb_data) == expected
+
+
+def test_decode_returns_none_if_empty_string_given():
+    assert decode("") is None
 
 
 def test_from_file_path_works():
@@ -294,7 +299,7 @@ def test_from_file_path_works():
         "NeedsCompilation": "no",
         "Packaged": "2015-08-16 141733 UTC; scott",
         "Repository": "CRAN",
-        "Date/Publication": "2015-08-16 230552"
+        "Date/Publication": "2015-08-16 230552",
     }
 
 
@@ -314,7 +319,7 @@ def test_from_file_tar_file_works():
         "NeedsCompilation": "no",
         "Packaged": "2015-08-16 141733 UTC; scott",
         "Repository": "CRAN",
-        "Date/Publication": "2015-08-16 230552"
+        "Date/Publication": "2015-08-16 230552",
     }
 
 
@@ -331,3 +336,8 @@ def test_from_file_tar_file_raises_exception_if_description_not_found():
 def test_from_file_path_raises_exception_if_not_exists():
     with pytest.raises(FileNotFoundError):
         from_file(path.join(data_path, "bobo.tar.gz"))
+
+
+def test_from_file_path_raises_exception_if_file_is_not_tarfile():
+    with pytest.raises(NotTarFile):
+        from_file(path.join(data_path, "PACKAGES_MIX.txt"))

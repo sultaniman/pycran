@@ -1,13 +1,7 @@
 """Parse CRAN package metadata"""
-from typing import Dict, Generator, Optional
+from typing import Dict, Generator, Optional, Set
 
-from pycran.util import (
-    as_string,
-    BytesOrString,
-    get_description,
-    PathOrTarFile
-)
-
+from pycran.util import BytesOrString, PathOrTarFile, as_string, get_description
 
 __version__ = "0.1.0"
 
@@ -23,8 +17,8 @@ def parse(data: BytesOrString) -> Generator:
     Returns:
         (Generator): each entry from packages as dictionary
     """
-    fields = set()
-    package = {}
+    fields: Set = set()
+    package: Dict = {}
 
     # We want to iterate over each line and accumulate
     # keys in dictionary, once we meet the same key
@@ -82,10 +76,7 @@ def encode(metadata: Dict) -> Optional[str]:
     Returns:
         (Optional[str]): package record as deb format
     """
-    return "\n".join([
-        f"{key}: {value}"
-        for key, value in metadata.items()
-    ])
+    return "\n".join([f"{key}: {value}" for key, value in metadata.items()])
 
 
 def decode(metadata: str) -> Optional[Dict]:
