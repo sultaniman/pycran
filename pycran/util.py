@@ -1,3 +1,4 @@
+import os
 import tarfile
 from typing import Union
 
@@ -18,7 +19,10 @@ def get_description(archive: PathOrTarFile) -> str:
         if not tarfile.is_tarfile(archive):
             raise tarfile.TarError(f"File {archive} is not tar archive")
 
+        filename = os.path.basename(archive)
+        [package_name, *_rest] = filename.split("_", maxsplit=1)
         with tarfile.open(archive) as tar:
-            description = tar.getmember("DESCRIPTION")
+            description_file = os.path.join(package_name, "DESCRIPTION")
+            description = tar.getmember(description_file)
             with tar.fileobject(tar, description) as metadata:
                 return as_string(metadata.read())
