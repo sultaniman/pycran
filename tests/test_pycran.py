@@ -4,7 +4,7 @@ from zipfile import ZipFile
 
 import pytest
 
-from pycran import decode, encode, from_file, parse
+import pycran
 from pycran.errors import DescriptionNotFound, NotTarFile
 
 data_path = path.join(path.dirname(__file__), "data")
@@ -30,7 +30,7 @@ def test_parse_works_with_normal_data():
     MD5sum: e048a3bca6ea32126e6c367415c0bfaf
     NeedsCompilation: no
     """
-    packages = [p for p in parse(data)]
+    packages = list(pycran.parse(data))
     assert len(packages) == 2
     assert packages[0] == {
         "Package": "ABACUS",
@@ -45,7 +45,7 @@ def test_parse_works_with_normal_data():
 
 
 def test_parse_works_with_empty_data():
-    assert [p for p in parse("")] == []
+    assert list(pycran.parse("")) == []
 
 
 def test_parse_works_on_non_separated_data():
@@ -61,7 +61,7 @@ def test_parse_works_on_non_separated_data():
     License: GPL (>= 3)
     MD5sum: 799079dbbdd0cfc9d9c61c3e35241806
     NeedsCompilation: no"""
-    result = list(parse(data))
+    result = list(pycran.parse(data))
     assert len(result) == 2
     assert result == [
         {
@@ -101,7 +101,7 @@ def test_parse_works_on_non_separated_data():
     NeedsCompilation: no
     """
 
-    assert len([p for p in parse(data)]) == 2
+    assert len(list(pycran.parse(data))) == 2
 
 
 def test_parse_works_on_mixed_data():
@@ -127,7 +127,7 @@ def test_parse_works_on_mixed_data():
     MD5sum: e048a3bca6ea32126e6c367415c0bfaf
     NeedsCompilation: no
     """
-    result = list(parse(data))
+    result = list(pycran.parse(data))
     assert len(result) == 3
     assert result == [
         {
@@ -178,19 +178,19 @@ def test_parse_works_with_binary_data():
     MD5sum: e048a3bca6ea32126e6c367415c0bfaf
     NeedsCompilation: no
     """
-    assert len([p for p in parse(data)]) == 2
+    assert len(list(pycran.parse(data))) == 2
 
 
 def test_parse_can_parse_all_entries_from_cran_registry():
     # Test on real package metadata from https://cran.r-project.org/src/contrib/PACKAGES
     with ZipFile(path.join(data_path, "PACKAGES.txt.zip")) as archive:
         with archive.open("PACKAGES.txt") as fp:
-            assert len(list(parse(fp.read()))) == 15398
+            assert len(list(pycran.parse(fp.read()))) == 15398
 
 
 def test_parse_can_parse_mixed_entries_from_cran_registry():
     with open(path.join(data_path, "PACKAGES_MIX.txt")) as fp:
-        assert list(parse(fp.read())) == [
+        assert list(pycran.parse(fp.read())) == [
             {
                 "Package": "A3",
                 "Version": "1.0.0",
@@ -233,7 +233,7 @@ def test_encode():
     MD5sum: 50c54c4da09307cb95a70aaaa54b9fbd
     NeedsCompilation: no
     """
-    result = encode(
+    result = pycran.encode(
         {
             "Package": "ABACUS",
             "Version": "1.0.0",
@@ -276,15 +276,15 @@ def test_decode_works():
         "NeedsCompilation": "no",
     }
 
-    assert decode(deb_data) == expected
+    assert pycran.decode(deb_data) == expected
 
 
 def test_decode_returns_none_if_empty_string_given():
-    assert decode("") is None
+    assert pycran.decode("") is None
 
 
 def test_from_file_path_works():
-    assert from_file(path.join(data_path, "A3_1.0.0.tar.gz")) == {
+    assert pycran.from_file(path.join(data_path, "A3_1.0.0.tar.gz")) == {
         "Package": "A3",
         "Type": "Package",
         "Title": "Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
@@ -304,7 +304,7 @@ def test_from_file_path_works():
 
 
 def test_from_file_tar_file_works():
-    assert from_file(tarfile.open(path.join(data_path, "A3_1.0.0.tar.gz"))) == {
+    assert pycran.from_file(tarfile.open(path.join(data_path, "A3_1.0.0.tar.gz"))) == {
         "Package": "A3",
         "Type": "Package",
         "Title": "Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
@@ -325,19 +325,19 @@ def test_from_file_tar_file_works():
 
 def test_from_file_path_raises_exception_if_description_not_found():
     with pytest.raises(DescriptionNotFound):
-        from_file(path.join(data_path, "A3_no_description.tar.gz"))
+        pycran.from_file(path.join(data_path, "A3_no_description.tar.gz"))
 
 
 def test_from_file_tar_file_raises_exception_if_description_not_found():
     with pytest.raises(DescriptionNotFound):
-        from_file(tarfile.open(path.join(data_path, "A3_no_description.tar.gz")))
+        pycran.from_file(tarfile.open(path.join(data_path, "A3_no_description.tar.gz")))
 
 
 def test_from_file_path_raises_exception_if_not_exists():
     with pytest.raises(FileNotFoundError):
-        from_file(path.join(data_path, "bobo.tar.gz"))
+        pycran.from_file(path.join(data_path, "bobo.tar.gz"))
 
 
 def test_from_file_path_raises_exception_if_file_is_not_tarfile():
     with pytest.raises(NotTarFile):
-        from_file(path.join(data_path, "PACKAGES_MIX.txt"))
+        pycran.from_file(path.join(data_path, "PACKAGES_MIX.txt"))
