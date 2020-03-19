@@ -41,7 +41,7 @@ $ pip install pycran
 
 ### Decode
 ```python
-from pycran import decode
+import pycran
 
 raw_metadata = """
 Package: ABACUS
@@ -54,7 +54,7 @@ MD5sum: 50c54c4da09307cb95a70aaaa54b9fbd
 NeedsCompilation: no
 """
 
-assert decode(raw_metadata) == {
+assert pycran.decode(raw_metadata) == {
     "Package": "ABACUS",
     "Version": "1.0.0",
     "Depends": "R (>= 3.1.0)",
@@ -69,7 +69,7 @@ assert decode(raw_metadata) == {
 ### Encode
 
 ```python
-from pycran import encode
+import pycran
 
 metadata = {
     "Package": "ABACUS",
@@ -82,21 +82,32 @@ metadata = {
     "NeedsCompilation": "no",
 }
 
-assert encode(metadata)
+expected = """
+Package: ABACUS
+Version: 1.0.0
+Depends: R (>= 3.1.0)
+Imports: ggplot2 (>= 3.1.0), shiny (>= 1.3.1),
+Suggests: rmarkdown (>= 1.13), knitr (>= 1.22)
+License: GPL-3
+MD5sum: 50c54c4da09307cb95a70aaaa54b9fbd
+NeedsCompilation: no
+"""
+
+assert pycran.encode(metadata) == expected
 ```
 
 ### Load from R source archive
 
 ```python
-from pycran import from_file
+import pycran
 
 # you can pass path to archive
-from_file("PATH/TO/PACKAGE/ABACUS_1.0.0.tar.gz")
+pycran.from_file("PATH/TO/PACKAGE/ABACUS_1.0.0.tar.gz")
 
 # or you can pass tarfile object
 import tarfile
 
-from_file(tarfile.open("PATH/TO/PACKAGE/ABACUS_1.0.0.tar.gz"))
+pycran.from_file(tarfile.open("PATH/TO/PACKAGE/ABACUS_1.0.0.tar.gz"))
 ```
 
 ### Parse raw metadata
@@ -105,17 +116,16 @@ In cases when you need to parse metadata for multiple
 packages you can pass the data to `pycran.parse` function
 
 ```python
-from pycran import parse
+import pycran
 
 # somehow you download the contents of https://cran.r-project.org/src/contrib/PACKAGES
 package_list = requests.get(https://cran.r-project.org/src/contrib/PACKAGES).text()
 
 # And parse it as a result you will get a generator which you can iterate
-parse(package_list)
+pycran.parse(package_list)
 ```
 
 <h2 align="center">Enjoy!&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h2>
 <p align="center">
         ✨ 🍰 ✨&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </p>
-
