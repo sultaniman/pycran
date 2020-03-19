@@ -114,7 +114,7 @@ package_list = requests.get(https://cran.r-project.org/src/contrib/PACKAGES).tex
 parse(package_list)
 ```
 
-Enjoy!
+<h2 align="center">Enjoy!&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h2>
 <p align="center">
         ✨ 🍰 ✨&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </p>
