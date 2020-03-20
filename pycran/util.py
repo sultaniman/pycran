@@ -21,7 +21,7 @@ def as_string(meta_line: BytesOrString) -> str:
     return meta_line
 
 
-def get_description(archive: PathOrTarFile) -> str:
+def read_description(archive: PathOrTarFile) -> str:
     """Convert bytes to string
     Args:
         archive (PathOrTarFile): path to archive or `TarFile` instance

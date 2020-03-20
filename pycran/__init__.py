@@ -1,7 +1,7 @@
 """Parse CRAN package metadata"""
 from typing import Dict, Generator, Optional, Set
 
-from pycran.util import BytesOrString, PathOrTarFile, as_string, get_description
+from pycran.util import BytesOrString, PathOrTarFile, as_string, read_description
 
 __version__ = "0.1.0"
 
@@ -116,4 +116,4 @@ def from_file(archive: PathOrTarFile) -> Optional[Dict]:
     Returns:
         (dict): Dictionary of R package metadata
     """
-    return decode(get_description(archive))
+    return decode(read_description(archive))
