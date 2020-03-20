@@ -1,6 +1,6 @@
 import tarfile
 from os import path
-from typing import Optional, Union
+from typing import Union
 
 from pycran.errors import DescriptionNotFound, NotTarFile
 
