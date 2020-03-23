@@ -36,7 +36,7 @@ def parse(data: BytesOrString) -> Generator:
             value = str("".join(parts[1:]).strip())
 
             if not field[0].isalpha():
-                field = None
+                field = ""
                 value = line
 
             if field and field in fields:
