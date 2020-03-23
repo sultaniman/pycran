@@ -159,6 +159,37 @@ def test_parse_works_on_mixed_data():
     ]
 
 
+def test_parse_properly_parses_non_field_lines():
+    data = b"""
+    Package: abbyyR
+    Title: Access to Abbyy Optical Character Recognition (OCR) API
+    Version: 0.5.5
+    Authors@R: person("Gaurav", "Sood", email = "gsood07@gmail.com", role = c("aut", "cre"))
+    Maintainer: Gaurav Sood <gsood07@gmail.com>
+    Description: Get text from images of text using Abbyy Cloud Optical Character
+        Recognition (OCR) API. Easily OCR images, barcodes, forms, documents with
+        machine readable zones, e.g. passports. Get the results in a variety of formats
+        including plain text and XML. To learn more about the Abbyy OCR API, see 
+        <http://ocrsdk.com/>.
+    URL: http://github.com/soodoku/abbyyR
+    BugReports: http://github.com/soodoku/abbyyR/issues
+    Depends: R (>= 3.2.0)
+    License: MIT + file LICENSE
+    LazyData: true
+    VignetteBuilder: knitr
+    Imports: httr, XML, curl, readr, plyr, progress
+    Suggests: testthat, rmarkdown, knitr (>= 1.11), lintr
+    RoxygenNote: 6.1.1
+    NeedsCompilation: no
+    Packaged: 2019-06-25 01:30:58 UTC; soodoku
+    Author: Gaurav Sood [aut, cre]
+    Repository: CRAN
+    Date/Publication: 2019-06-25 04:30:04 UTC
+    """
+    [package] = list(pycran.parse(data))
+    assert "<http" not in package
+
+
 def test_parse_works_with_binary_data():
     data = b"""
     Package: ABACUS
@@ -297,9 +328,9 @@ def test_from_file_path_works():
         "Depends": "R (>= 2.15.0), xtable, pbapply",
         "Suggests": "randomForest, e1071",
         "NeedsCompilation": "no",
-        "Packaged": "2015-08-16 141733 UTC; scott",
+        "Packaged": "2015-08-16 14:17:33 UTC; scott",
         "Repository": "CRAN",
-        "Date/Publication": "2015-08-16 230552",
+        "Date/Publication": "2015-08-16 23:05:52",
     }
 
 
@@ -317,9 +348,9 @@ def test_from_file_tar_file_works():
         "Depends": "R (>= 2.15.0), xtable, pbapply",
         "Suggests": "randomForest, e1071",
         "NeedsCompilation": "no",
-        "Packaged": "2015-08-16 141733 UTC; scott",
+        "Packaged": "2015-08-16 14:17:33 UTC; scott",
         "Repository": "CRAN",
-        "Date/Publication": "2015-08-16 230552",
+        "Date/Publication": "2015-08-16 23:05:52",
     }
 
 

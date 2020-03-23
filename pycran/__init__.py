@@ -31,9 +31,13 @@ def parse(data: BytesOrString) -> Generator:
             continue
 
         if ":" in line:
-            parts = line.split(":")
+            parts = line.split(":", maxsplit=1)
             field = parts[0].strip()
             value = str("".join(parts[1:]).strip())
+
+            if not field[0].isalpha():
+                field = None
+                value = line
 
             if field and field in fields:
                 fields = {field}
