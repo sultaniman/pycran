@@ -3,7 +3,7 @@ from typing import Dict, Generator, Optional, Set
 
 from pycran.util import BytesOrString, PathOrTarFile, as_string, read_description
 
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 
 
 def parse(data: BytesOrString) -> Generator:
