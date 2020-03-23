@@ -188,6 +188,7 @@ def test_parse_properly_parses_non_field_lines():
     """
     [package] = list(pycran.parse(data))
     assert "<http" not in package
+    assert "<http://ocrsdk.com/>" in package["Description"]
 
 
 def test_parse_works_with_binary_data():
@@ -229,7 +230,7 @@ def test_parse_can_parse_mixed_entries_from_cran_registry():
                 "Suggests": "randomForest, e1071",
                 "License": "GPL (>= 2)",
                 "MD5sum": "027ebdd8affce8f0effaecfcd5f5ade2",
-                "NeedsCompilation": "no",
+                "NeedsCompilation": "no"
             },
             {
                 "Package": "A8",
@@ -238,7 +239,7 @@ def test_parse_can_parse_mixed_entries_from_cran_registry():
                 "Suggests": "randomForest, e1071",
                 "License": "GPL (>= 2)",
                 "MD5sum": "027ebdd8affce8f0effaecfcd5f5ade2",
-                "NeedsCompilation": "no",
+                "NeedsCompilation": "no"
             },
             {
                 "Package": "aaSEA",
@@ -248,8 +249,8 @@ def test_parse_can_parse_mixed_entries_from_cran_registry():
                 "Suggests": "knitr, rmarkdown",
                 "License": "GPL-3",
                 "MD5sum": "0f9aaefc1f1cf18b6167f85dab3180d8",
-                "NeedsCompilation": "no",
-            },
+                "NeedsCompilation": "no"
+            }
         ]
 
 

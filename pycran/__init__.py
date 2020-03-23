@@ -20,6 +20,12 @@ def parse(data: BytesOrString) -> Generator:
     fields: Set = set()
     package: Dict = {}
 
+    def append(value: BytesOrString):
+        pairs = list(package.items())
+        if pairs:
+            last_field = pairs[-1][0]
+            package[last_field] += value
+
     # We want to iterate over each line and accumulate
     # keys in dictionary, once we meet the same key
     # in our dictionary we have a single package
@@ -49,13 +55,13 @@ def parse(data: BytesOrString) -> Generator:
                 # Here we want to parse dangling lines
                 # like the ones with long dependency
                 # list, `R (>= 2.15.0), xtable, pbapply ... \n    and more`
-                package[field] = value
-                fields.add(field)
+                if field:
+                    package[field] = value
+                    fields.add(field)
+                else:
+                    append(value)
         else:
-            pairs = list(package.items())
-            if pairs:
-                last_field = pairs[-1][0]
-                package[last_field] += f" {line.strip()}"
+            append(f" {line.strip()}")
 
     # We also need to return the metadata for
     # the last parsed package.
