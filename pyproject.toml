@@ -38,7 +38,8 @@ test = [
 
 dev = [
     "bumpversion",
+    "python-debian==0.1.36",
     "black==19.10b0",
     "isort",
-    "mypy",
+    "mypy"
 ]
