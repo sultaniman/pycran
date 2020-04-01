@@ -1,11 +1,8 @@
 import tarfile
 from os import path
-from typing import Union
 
 from pycran.errors import DescriptionNotFound, NotTarFile
-
-PathOrTarFile = Union[tarfile.TarFile, str]
-BytesOrString = Union[bytes, str]
+from pycran.typings import PathOrTarFile, BytesOrString
 
 
 def as_string(meta_line: BytesOrString) -> str:

@@ -1,7 +1,8 @@
 """Parse CRAN package metadata"""
 from typing import Dict, Generator, Optional, Set
 
-from pycran.util import BytesOrString, PathOrTarFile, as_string, read_description
+from pycran.util import as_string, read_description
+from pycran.typings import PathOrTarFile, BytesOrString
 
 __version__ = "0.1.2"
 
@@ -20,11 +21,11 @@ def parse(data: BytesOrString) -> Generator:
     fields: Set = set()
     package: Dict = {}
 
-    def append(value: BytesOrString):
+    def append(field_value: BytesOrString):
         pairs = list(package.items())
         if pairs:
             last_field = pairs[-1][0]
-            package[last_field] += value
+            package[last_field] += field_value
 
     # We want to iterate over each line and accumulate
     # keys in dictionary, once we meet the same key
