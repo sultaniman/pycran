@@ -1,8 +1,12 @@
+import re
 import tarfile
+import textwrap
+from io import StringIO
 from os import path
 from zipfile import ZipFile
 
 import pytest
+from debian.deb822 import Deb822
 
 import pycran
 from pycran.errors import DescriptionNotFound, NotTarFile
@@ -217,7 +221,7 @@ def test_parse_can_parse_all_entries_from_cran_registry():
     # Test on real package metadata from https://cran.r-project.org/src/contrib/PACKAGES
     with ZipFile(path.join(data_path, "PACKAGES.txt.zip")) as archive:
         with archive.open("PACKAGES.txt") as fp:
-            assert len(list(pycran.parse(fp.read()))) == 15398
+            assert len(list(pycran.parse(fp.read()))) == 15397
 
 
 def test_parse_can_parse_mixed_entries_from_cran_registry():
@@ -373,3 +377,120 @@ def test_from_file_path_raises_exception_if_not_exists():
 def test_from_file_path_raises_exception_if_file_is_not_tarfile():
     with pytest.raises(NotTarFile):
         pycran.from_file(path.join(data_path, "PACKAGES_MIX.txt"))
+
+
+# Cross validation tests to check if parsing is valid and correct
+# we will use `deb-pkg-tools` package to parse and test matches
+# NOTE: our parser intentionally strips whitespaces and
+# `deb-pkg-tools` preserves them all.
+def _deb_parse(sequence: str):
+    # We need to strip new lines from field values
+    parsed = dict(Deb822(StringIO(textwrap.dedent(sequence).strip())))
+    _strip_and_clean(parsed)
+    return parsed
+
+
+def _strip_and_clean(parsed):
+    for key in parsed:
+        val = parsed[key]
+        parsed[key] = re.sub(r"\n", "", val)
+        parsed[key] = re.sub(r"\s+", " ", val)
+
+
+def test_cross_validation_simple_parse():
+    deb_data = """
+    Package: ABACUS
+    Version: 1.0.0
+    Depends: R (>= 3.1.0)
+    Imports: ggplot2 (>= 3.1.0), shiny (>= 1.3.1),
+    Suggests: rmarkdown (>= 1.13), knitr (>= 1.22)
+    License: GPL-3
+    MD5sum: 50c54c4da09307cb95a70aaaa54b9fbd
+    NeedsCompilation: no
+    """
+
+    expected = {
+        "Package": "ABACUS",
+        "Version": "1.0.0",
+        "Depends": "R (>= 3.1.0)",
+        "Imports": "ggplot2 (>= 3.1.0), shiny (>= 1.3.1),",
+        "Suggests": "rmarkdown (>= 1.13), knitr (>= 1.22)",
+        "License": "GPL-3",
+        "MD5sum": "50c54c4da09307cb95a70aaaa54b9fbd",
+        "NeedsCompilation": "no",
+    }
+
+    assert _deb_parse(deb_data) == pycran.decode(deb_data)
+    assert _deb_parse(deb_data) == expected
+    assert pycran.decode(deb_data) == expected
+
+
+def test_cross_validation_large_sequence_parse():
+    deb_data = """
+    Package: abbyyR
+    Title: Access to Abbyy Optical Character Recognition (OCR) API
+    Version: 0.5.5
+    Authors@R: person("Gaurav", "Sood", email = "gsood07@gmail.com", role = c("aut", "cre"))
+    Maintainer: Gaurav Sood <gsood07@gmail.com>
+    Description: Get text from images of text using Abbyy Cloud Optical Character
+        Recognition (OCR) API. Easily OCR images, barcodes, forms, documents with
+        machine readable zones, e.g. passports. Get the results in a variety of formats
+        including plain text and XML. To learn more about the Abbyy OCR API, see 
+        <http://ocrsdk.com/>.
+    URL: http://github.com/soodoku/abbyyR
+    BugReports: http://github.com/soodoku/abbyyR/issues
+    Depends: R (>= 3.2.0)
+    License: MIT + file LICENSE
+    LazyData: true
+    VignetteBuilder: knitr
+    Imports: httr, XML, curl, readr, plyr, progress
+    Suggests: testthat, rmarkdown, knitr (>= 1.11), lintr
+    RoxygenNote: 6.1.1
+    NeedsCompilation: no
+    Packaged: 2019-06-25 01:30:58 UTC; soodoku
+    Author: Gaurav Sood [aut, cre]
+    Repository: CRAN
+    Date/Publication: 2019-06-25 04:30:04 UTC
+    """
+
+    expected = {
+        "Package": "abbyyR",
+        "Title": "Access to Abbyy Optical Character Recognition (OCR) API",
+        "Version": "0.5.5",
+        "Authors@R": 'person("Gaurav", "Sood", email = "gsood07@gmail.com", role = c("aut", "cre"))',
+        "Maintainer": "Gaurav Sood <gsood07@gmail.com>",
+        "Description": "Get text from images of text using Abbyy Cloud Optical Character Recognition (OCR) API. Easily OCR images, barcodes, forms, documents with machine readable zones, e.g. passports. Get the results in a variety of formats including plain text and XML. To learn more about the Abbyy OCR API, see <http://ocrsdk.com/>.",
+        "URL": "http://github.com/soodoku/abbyyR",
+        "BugReports": "http://github.com/soodoku/abbyyR/issues",
+        "Depends": "R (>= 3.2.0)",
+        "License": "MIT + file LICENSE",
+        "LazyData": "true",
+        "VignetteBuilder": "knitr",
+        "Imports": "httr, XML, curl, readr, plyr, progress",
+        "Suggests": "testthat, rmarkdown, knitr (>= 1.11), lintr",
+        "RoxygenNote": "6.1.1",
+        "NeedsCompilation": "no",
+        "Packaged": "2019-06-25 01:30:58 UTC; soodoku",
+        "Author": "Gaurav Sood [aut, cre]",
+        "Repository": "CRAN",
+        "Date/Publication": "2019-06-25 04:30:04 UTC",
+    }
+
+    assert _deb_parse(deb_data) == pycran.decode(deb_data)
+    assert _deb_parse(deb_data) == expected
+    assert pycran.decode(deb_data) == expected
+
+
+def test_cross_validation_cran_index_parse():
+    # Test on real package metadata from https://cran.r-project.org/src/contrib/PACKAGES
+    with ZipFile(path.join(data_path, "PACKAGES.txt.zip")) as archive:
+        with archive.open("PACKAGES.txt") as fp:
+            data = fp.read()
+            pycran_parsed = list(pycran.parse(data))
+            deb_parsed = list(Deb822.iter_paragraphs(data))
+            assert len(pycran_parsed) == len(deb_parsed)
+
+            for i, pkg in enumerate(pycran_parsed):
+                pyc_pkg = pycran_parsed[i]
+                _strip_and_clean(pkg)
+                assert pkg == pyc_pkg
