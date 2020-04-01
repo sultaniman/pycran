@@ -33,12 +33,12 @@ include = ["README.md"]
 [tool.flit.metadata.requires-extra]
 test = [
     "pytest",
-    "pytest-cov"
+    "pytest-cov",
+    "deb-pkg-tools>=7.0"
 ]
 
 dev = [
     "bumpversion",
-    "deb-pkg-tools>=7.0",
     "black==19.10b0",
     "isort",
     "mypy"
