@@ -31,7 +31,7 @@ def read_description(archive: PathOrTarFile) -> str:
             raise FileNotFoundError(f"File {archive} does not exist.")
 
         if not tarfile.is_tarfile(archive):
-            raise NotTarFile(f"File {archive} is not tar archive.")
+            raise NotTarFile(f"File {archive} is not a tar archive.")
 
         tar: tarfile.TarFile = tarfile.open(archive)
     else:

@@ -12,6 +12,8 @@ def parse(data: BytesOrString) -> Generator:
     https://cran.r-project.org/src/contrib/PACKAGES
     and returns the list of dictionaries.
 
+    Note: long whitespaces and new lines are stripped.
+
     Args:
         data (BytesOrString): raw text from the package list
 
