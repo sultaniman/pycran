@@ -38,7 +38,7 @@ test = [
 
 dev = [
     "bumpversion",
-    "python-debian==0.1.36",
+    "deb-pkg-tools>=7.0",
     "black==19.10b0",
     "isort",
     "mypy"
