@@ -1,8 +1,8 @@
 """Parse CRAN package metadata"""
 from typing import Dict, Generator, Optional, Set
 
+from pycran.typings import BytesOrString, PathOrTarFile
 from pycran.util import as_string, read_description
-from pycran.typings import PathOrTarFile, BytesOrString
 
 __version__ = "0.1.2"
 
@@ -57,10 +57,10 @@ def parse(data: BytesOrString) -> Generator:
                 # like the ones with long dependency
                 # list, `R (>= 2.15.0), xtable, pbapply ... \n    and more`
                 if field:
-                    package[field] = value
+                    package[field] = value.strip()
                     fields.add(field)
                 else:
-                    append(value)
+                    append(f" {value.strip()}")
         else:
             append(f" {line.strip()}")
 
