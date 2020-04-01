@@ -2,7 +2,7 @@ import tarfile
 from os import path
 
 from pycran.errors import DescriptionNotFound, NotTarFile
-from pycran.typings import PathOrTarFile, BytesOrString
+from pycran.typings import BytesOrString, PathOrTarFile
 
 
 def as_string(meta_line: BytesOrString) -> str:
