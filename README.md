@@ -9,7 +9,7 @@
 </p>
 
 ## Overview 👀
-Yet another metadata parser for R source packages and R metadata information
+Yet another metadata parser for `R` source packages and `R` metadata information
 
 ```ini
 Package: ABACUS
@@ -28,7 +28,7 @@ PyCran lets us parse raw metadata and get it as dictionary, you can:
 
 1. Encode metadata dictionary to raw format,
 2. Decode raw metadata and receive it as dictionary,
-3. Load from tar archive with R library sources.
+3. Load from tar archive with `R` library sources.
 
 
 ## Installation 💾
