@@ -1,7 +1,7 @@
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pycran?label=Python&style=for-the-badge)](https://pypi.org/project/pycran/)
 ![Build Status](https://img.shields.io/travis/com/imanhodjaev/pycran/master?style=for-the-badge)
 ![Maintainability](https://img.shields.io/codeclimate/maintainability/imanhodjaev/pycran?style=for-the-badge&color=44d298)
-![Codecov](https://img.shields.io/codecov/c/github/imanhodjaev/pycran?style=for-the-badge)
+![Codecov](https://img.shields.io/codecov/c/github/imanhodjaev/pycran/master?style=for-the-badge)
 ![PyPI - License](https://img.shields.io/pypi/l/pycran?color=ff69b4&style=for-the-badge)
 
 <p align="center">
