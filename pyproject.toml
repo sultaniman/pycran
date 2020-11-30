@@ -34,6 +34,7 @@ include = ["README.md"]
 test = [
     "pytest",
     "pytest-cov",
+    "python-debian",
     "deb-pkg-tools>=7.0"
 ]
 
